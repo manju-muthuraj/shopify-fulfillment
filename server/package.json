@@ -1,0 +1,28 @@
+{
+  "name": "stedi-plugin",
+  "version": "1.0.0",
+  "description": "Shopify Fulfillment to EDI 940 via Stedi",
+  "main": ".index.js",
+  "scripts": {
+    "build": "tsc",
+    "local": "tsc && node local.js"
+  },
+  "keywords": [],
+  "author": "Manjunatha M",
+  "license": "ISC",
+  "dependencies": {
+    "@types/got": "8.3.3",
+    "@types/node": "^20.8.10",
+    "got": "8.0.1",
+    "os-browserify": "^0.3.0",
+    "util": "^0.12.5",
+    "winston": "^3.11.0",
+    "@aws-sdk/client-secrets-manager": "3.363.0"
+  },
+  "devDependencies": {
+    "ts-loader": "^9.5.0",
+    "typescript": "^5.2.2",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  }
+}

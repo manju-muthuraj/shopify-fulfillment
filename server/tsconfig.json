@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+      "module": "CommonJS",
+      "target": "ESNext",
+      "lib": ["es2017", "esnext.asynciterable"],
+      "moduleResolution": "node",
+      "sourceMap": false
+    },
+    "lib": ["es2017", "esnext.asynciterable"]
+  }
