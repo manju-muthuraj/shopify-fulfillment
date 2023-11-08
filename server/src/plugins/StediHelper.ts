@@ -1,31 +1,30 @@
-import { ISecrets, IShopifyFulfilmentOrder, ITransactionGroup, ITransactions } from './IShopify';
-import { log } from '../utils/LoggerUtil';
+import {ISecrets, IShopifyFulfillmentOrder, ITransactionGroup, ITransactions} from './IShopify';
+import {log} from '../utils/LoggerUtil';
 import * as got from 'got';
-import { GetSecretValueCommandOutput, SecretsManager } from '@aws-sdk/client-secrets-manager';
+import {GetSecretValueCommandOutput, SecretsManager} from '@aws-sdk/client-secrets-manager';
 
-export class Utils {
+export class StediHelper {
     private static readonly MAPPING_URL = 'https://mappings.stedi.com/2021-06-01/mappings';
     private static readonly GENERATE_EDI_URL = 'https://partners.us.stedi.com/2022-01-01/x12/partnerships';
 
-    public static async invokeMapping(payload: IShopifyFulfilmentOrder, secrets: ISecrets) {
-        const data = payload.toString();
+    public static async invokeMapping(payload: IShopifyFulfillmentOrder, secrets: ISecrets) {
 
-        log.info(`Payload ${data}`);
+        const data = JSON.parse(JSON.stringify(payload));
+
+        // I'm taking first order for now. We can traverse through for all the orders later.
+        const sanitizedData = JSON.parse(JSON.parse(JSON.stringify(data).replace(/\\n/g, ''))).fulfillment_orders[0];
 
         const config = {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Key ${secrets.API_KEY}`,
             },
-            body: JSON.parse(data.replace(/\\n/g, '')),
-            json: true
+            body: sanitizedData,
+            json: true,
         };
-
-
         try {
             let transformedPayload = await got.post(`${this.MAPPING_URL}/${secrets.MAP_ID}/map`, config);
-            log.info(`Transformed payload: ${JSON.stringify(transformedPayload.body)}`);
-            transformedPayload.body = Utils.envelopeTransactionV2(transformedPayload.body, secrets);
+            transformedPayload.body = StediHelper.envelopeTransactionV2(transformedPayload.body, secrets);
             log.info(`Transformed payload with transaction group: ${JSON.stringify(transformedPayload.body)}`);
             return Promise.resolve(JSON.stringify(transformedPayload.body));
         } catch (e) {
@@ -49,7 +48,6 @@ export class Utils {
 
         try {
             const transformedPayload = await got.post(`${this.GENERATE_EDI_URL}/${secrets.PARTNERSHIP_ID}/generate-edi`, config);
-            log.info(`Transformed JSON to EDI: ${JSON.stringify(transformedPayload.body)}`);
             return Promise.resolve(transformedPayload);
         } catch (e) {
             log.info(`Error in generating edi due to ${e}`);
@@ -98,9 +96,9 @@ export class Utils {
     public static async getSecretValues(secretName: string): Promise<ISecrets> {
         try {
             // Retrieve the secret value from AWS Secrets Manager
-            const sms: SecretsManager = new SecretsManager({ region: 'us-west-2'});
+            const sms: SecretsManager = new SecretsManager({region: 'us-west-2'});
             const getSecretValueResponse: GetSecretValueCommandOutput = await sms.getSecretValue({SecretId: secretName});
-            log.debug('getSecretValueResponse stringify ' + JSON.stringify(getSecretValueResponse));
+            //log.info('getSecretValueResponse stringify ' + JSON.stringify(getSecretValueResponse));
             const secret = JSON.parse(getSecretValueResponse.SecretString);
 
             // Extract and return the secret values
@@ -109,7 +107,9 @@ export class Utils {
                 PARTNERSHIP_ID: secret.partnerId,
                 EDI_FILE_NAME: secret.ediFileName,
                 TRANSACTION_SETTINGS_ID: secret.tranSettingsId,
-                MAP_ID: secret.mapId
+                MAP_ID: secret.mapId,
+                SHOPIFY_ACCESS_TOKEN: secret.shopifyToken
+
             };
         } catch (error) {
             log.error('Error retrieving secret: ', error);

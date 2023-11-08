@@ -132,6 +132,52 @@ const shopifyFulfilmentOrder =
       "isBase64Encoded": false
     }
 
-handler(postmanEv)
+const fulfillmentRequest = {
+    "version": "2.0",
+    "routeKey": "$default",
+    "rawPath": "/fulfillment_order_notification",
+    "rawQueryString": "",
+    "headers": {
+        "x-shopify-shop-domain": "my-test-data-store.myshopify.com",
+        "content-length": "30",
+        "x-amzn-tls-version": "TLSv1.2",
+        "x-forwarded-proto": "https",
+        "x-forwarded-port": "443",
+        "x-forwarded-for": "34.148.61.107",
+        "x-shopify-hmac-sha256": "iA8GWmSf13KWjy3umvF0CjTkqjRC5WgtX/SiPiIm5sI=",
+        "accept": "*/*",
+        "x-shopify-trace-context": "17c902130e4b253906e18619a3e68226/15568134756664316667;o=1",
+        "x-amzn-tls-cipher-suite": "ECDHE-RSA-AES128-GCM-SHA256",
+        "tracestate": "ot=p:0;r:5",
+        "x-amzn-trace-id": "Root=1-6549b7d9-00015ad72f8db20e0653d457",
+        "x-cloud-trace-context": "17c902130e4b253906e18619a3e68226/15568134756664316667;o=1",
+        "host": "4si5hlliq5e2um2kcnn4rhs7gq0yrmuz.lambda-url.us-west-2.on.aws",
+        "content-type": "application/json",
+        "accept-encoding": "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+        "user-agent": "Ruby"
+    },
+    "requestContext": {
+        "accountId": "anonymous",
+        "apiId": "4si5hlliq5e2um2kcnn4rhs7gq0yrmuz",
+        "domainName": "4si5hlliq5e2um2kcnn4rhs7gq0yrmuz.lambda-url.us-west-2.on.aws",
+        "domainPrefix": "4si5hlliq5e2um2kcnn4rhs7gq0yrmuz",
+        "http": {
+            "method": "POST",
+            "path": "/fulfillment_order_notification",
+            "protocol": "HTTP/1.1",
+            "sourceIp": "34.148.61.107",
+            "userAgent": "Ruby"
+        },
+        "requestId": "1d36334a-b449-4db9-a443-dd2379b14dfa",
+        "routeKey": "$default",
+        "stage": "$default",
+        "time": "07/Nov/2023:04:06:49 +0000",
+        "timeEpoch": 1699330009375
+    },
+    "body": "{\"kind\":\"FULFILLMENT_REQUEST\"}",
+    "isBase64Encoded": false
+}
+
+handler(fulfillmentRequest)
     .then( data => { log.info(`TEST ${data}`)})
     .catch(error => { log.info(`Error ${error}`) })

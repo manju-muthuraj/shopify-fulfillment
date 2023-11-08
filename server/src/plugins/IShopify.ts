@@ -1,92 +1,76 @@
 interface Destination {
     id: number;
     address1: string;
-    address2: string;
+    address2: string | null;
     city: string;
     company: string;
     country: string;
     email: string;
     first_name: string;
     last_name: string;
-    phone: string;
-    province: string;
+    phone: string | null;
+    province: string | null;
     zip: string;
-}
-
-interface DeliveryMethod {
-    id: number;
-    method_type: string;
-    min_delivery_date_time: string;
-    max_delivery_date_time: string;
-}
-
-interface FulfillmentHold {
-    reason: string;
-    reason_notes: string;
-}
-
-interface InternationalDuties {
-    incoterm: string;
 }
 
 interface LineItem {
     id: number;
     shop_id: number;
     fulfillment_order_id: number;
+    quantity: number;
     line_item_id: number;
     inventory_item_id: number;
-    quantity: number;
-    fulfillable_quantity: number;
+    fillable_quantity: number;
     variant_id: number;
 }
 
-interface RequestOptions {
-    shipping_method: string;
-    note: string;
-    date: string;
-}
-
-interface MerchantRequest {
+interface OutgoingRequest {
     message: string;
-    request_options: RequestOptions;
+    request_options: {
+        notify_customer: boolean;
+    };
+    sent_at: string;
     kind: string;
 }
 
+interface DeliveryMethod {
+    id: number;
+    method_type: string;
+    min_delivery_date_time: string | null;
+    max_delivery_date_time: string | null;
+}
+
 interface AssignedLocation {
-    address1: string;
-    address2: string;
-    city: string;
+    address1: string | null;
+    address2: string | null;
+    city: string | null;
     country_code: string;
     location_id: number;
     name: string;
-    phone: string;
-    province: string;
-    zip: string;
+    phone: string | null;
+    province: string | null;
+    zip: string | null;
 }
 
-interface UpdatedAt {
-    created_at: string;
-}
-
-export interface IShopifyFulfilmentOrder {
-    assigned_location_id: number;
-    destination: Destination;
-    delivery_method: DeliveryMethod;
-    fulfill_at: string;
-    fulfill_by: string;
-    fulfillment_holds: FulfillmentHold[];
+export interface IShopifyFulfillmentOrder {
     id: number;
-    international_duties: InternationalDuties;
-    line_items: LineItem[];
-    order_id: number;
-    request_status: string;
     shop_id: number;
+    order_id: number;
+    assigned_location_id: number;
+    request_status: string;
     status: string;
     supported_actions: string[];
-    merchant_requests: MerchantRequest[];
-    assigned_location: AssignedLocation;
+    destination: Destination;
+    line_items: LineItem[];
+    outgoing_requests: OutgoingRequest[];
+    international_duties: null;
+    fulfill_at: string;
+    fulfill_by: null;
+    fulfillment_holds: any[];
     created_at: string;
-    updated_at: UpdatedAt;
+    updated_at: string;
+    delivery_method: DeliveryMethod;
+    assigned_location: AssignedLocation;
 }
 
 export interface ITransactionGroup {
@@ -98,8 +82,7 @@ export interface ITransactionGroup {
 
 export interface ITransactions {
     "transactionSettingId": string,
-    "transactions": [
-    ]
+    "transactions": []
 }
 
 export interface ISecrets {
@@ -108,4 +91,5 @@ export interface ISecrets {
     EDI_FILE_NAME: string;
     TRANSACTION_SETTINGS_ID: string;
     MAP_ID: string;
+    SHOPIFY_ACCESS_TOKEN: string
 }

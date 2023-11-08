@@ -10,8 +10,8 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "bootstarp": "cdk bootstrap",
-    "deploy": "cdk deploy"
+    "bootstrap": "cdk bootstrap --force",
+    "deploy": "cdk deploy --force"
   },
   "devDependencies": {
     "@aws-cdk/assertions": "^1.204.0",

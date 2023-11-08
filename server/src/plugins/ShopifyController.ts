@@ -1,20 +1,29 @@
-import { ISecrets, IShopifyFulfilmentOrder } from './IShopify';
-import { Utils } from './Utils';
-import { log } from '../utils/LoggerUtil';
+import {ISecrets} from './IShopify';
+import {StediHelper} from './StediHelper';
+import {log} from '../utils/LoggerUtil';
+import {ShopifyHelper} from "./ShopifyHelper";
 
 export class ShopifyController {
 
     private static secretName = process.env.SECRET_NAME || 'STEDIKEYS';
 
-    public static async shopifyFulfillment(payload: IShopifyFulfilmentOrder): Promise<any> {
-        log.info(`Inside shopifyFulfillment: ${JSON.stringify(payload)}`);
+    public static async shopifyFulfillment(): Promise<any> {
+        log.info(`Inside shopifyFulfillment`);
 
         log.info(`Secret Name: ${this.secretName}`);
-        const secrets: ISecrets = await Utils.getSecretValues(this.secretName);
+        const secrets: ISecrets = await StediHelper.getSecretValues(this.secretName);
 
-        const transformedPayload = await Utils.invokeMapping(payload, secrets);
-        const generatedEdi = await Utils.generateEdi(transformedPayload, secrets);
+        // Get the assigned fulfillment orders from the shopify
+        const fulfillmentOrders = await ShopifyHelper.getAssignedFulfillmentOrders(secrets);
+
+        // Get the JSON representation of fulfillment order with transaction groups
+        const transformedPayload = await StediHelper.invokeMapping(fulfillmentOrders, secrets);
+
+        // Get the 940 EDI after the transformation
+        const generatedEdi = await StediHelper.generateEdi(transformedPayload, secrets);
         log.info(`Generated EDI : ${JSON.stringify(generatedEdi.body)}`);
+
+        // Accept the fulfillment once the partner receives the EDI 940
         return generatedEdi;
     }
 }

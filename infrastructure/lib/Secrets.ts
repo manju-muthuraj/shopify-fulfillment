@@ -10,7 +10,8 @@ export interface ISecretsData {
     TRANSACTION_SETTINGS_ID: string,
     MAP_ID: string,
     REGION: string,
-    ACCOUNT_ID: string
+    ACCOUNT_ID: string,
+    SHOPIFY_ACCESS_TOKEN: string
 }
 
 export class createSecrets {
@@ -22,6 +23,7 @@ export class createSecrets {
         TRANSACTION_SETTINGS_ID: string;
         REGION: string;
         ACCOUNT_ID: string;
+        SHOPIFY_ACCESS_TOKEN: string
     };
 
     constructor() {
@@ -45,6 +47,7 @@ export class createSecrets {
                     ediFileName: createSecrets.secData.EDI_FILE_NAME,
                     tranSettingsId: createSecrets.secData.TRANSACTION_SETTINGS_ID,
                     mapId: createSecrets.secData.MAP_ID,
+                    shopifyToken: createSecrets.secData.SHOPIFY_ACCESS_TOKEN
                 }),
                 generateStringKey: 'password'
             },
@@ -63,6 +66,7 @@ export class createSecrets {
             createSecrets.secData.TRANSACTION_SETTINGS_ID = config.TRANSACTION_SETTINGS_ID;
             createSecrets.secData.REGION = config.REGION;
             createSecrets.secData.ACCOUNT_ID = config.ACCOUNT_ID;
+            createSecrets.secData.SHOPIFY_ACCESS_TOKEN = config.SHOPIFY_ACCESS_TOKEN;
         } catch (err) {
             console.error(`Error reading the yaml file ::: ${err}`);
         }
