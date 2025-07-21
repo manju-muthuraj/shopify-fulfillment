@@ -10,7 +10,6 @@ export class ShopifyController {
     public static async shopifyFulfillment(): Promise<any> {
         log.info(`Inside shopifyFulfillment`);
 
-        log.info(`Secret Name: ${this.secretName}`);
         const secrets: ISecrets = await StediHelper.getSecretValues(this.secretName);
 
         // Get the assigned fulfillment orders from the shopify
